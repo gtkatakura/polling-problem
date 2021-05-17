@@ -3,23 +3,23 @@ import "regenerator-runtime/runtime";
 import type { FC } from "react";
 import React from "react";
 import { RelayEnvironmentProvider } from "relay-hooks";
-// import {
-//   errorMiddleware,
-//   loggerMiddleware,
-//   perfMiddleware,
-//   RelayNetworkLayer,
-//   retryMiddleware,
-//   urlMiddleware,
-// } from 'react-relay-network-modern'
+import {
+  errorMiddleware,
+  loggerMiddleware,
+  perfMiddleware,
+  RelayNetworkLayer,
+  retryMiddleware,
+  urlMiddleware,
+} from "react-relay-network-modern";
 import EnvironmentIDB from "react-relay-offline/lib/runtime/EnvironmentIDB";
-// import { StatusCodes } from 'http-status-codes'
+import { StatusCodes } from "http-status-codes";
 import { useRestore } from "react-relay-offline";
 import type { FetchFunction } from "relay-runtime";
 import { Network } from "relay-runtime";
 
-// import { name as appName, version as appVersion } from '../../../package.json'
+import { name as appName, version as appVersion } from "../../../package.json";
 
-// const IS_DEVELOPMENT_MODE = process.env.NODE_ENV === 'development'
+const IS_DEVELOPMENT_MODE = process.env.NODE_ENV === "development";
 
 const fetchQuery: FetchFunction = (operation, variables) => {
   return {
@@ -59,38 +59,39 @@ const fetchQuery: FetchFunction = (operation, variables) => {
   } as any;
 };
 
-const network = Network.create(fetchQuery);
+// const network = Network.create(fetchQuery);
 
-// const network = new RelayNetworkLayer([
-//   urlMiddleware({
-//     method: 'POST',
-//     url: ({ operation }) => `/graphql?operationName=${operation.name}`,
-//     headers: {
-//       'ApolloGraphQL-Client-Name': appName,
-//       'ApolloGraphQL-Client-Version': IS_DEVELOPMENT_MODE
-//         ? `${process.env.GATSBY_USER_HOSTNAME}@${appVersion}`
-//         : appVersion,
-//     },
-//   }),
+const network = new RelayNetworkLayer([
+  urlMiddleware({
+    method: "POST",
+    url: ({ operation }) =>
+      `http://localhost:4000/graphql?operationName=${operation.name}`,
+    headers: {
+      "ApolloGraphQL-Client-Name": appName,
+      "ApolloGraphQL-Client-Version": IS_DEVELOPMENT_MODE
+        ? `${process.env.GATSBY_USER_HOSTNAME}@${appVersion}`
+        : appVersion,
+    },
+  }),
 
-//   // IS_DEVELOPMENT_MODE ? loggerMiddleware() : null,
-//   // IS_DEVELOPMENT_MODE ? errorMiddleware() : null,
-//   // IS_DEVELOPMENT_MODE ? perfMiddleware() : null,
+  // IS_DEVELOPMENT_MODE ? loggerMiddleware() : null,
+  // IS_DEVELOPMENT_MODE ? errorMiddleware() : null,
+  // IS_DEVELOPMENT_MODE ? perfMiddleware() : null,
 
-//   // retryMiddleware({
-//   //   allowMutations: false,
-//   //   fetchTimeout: 5 * 1000,
-//   //   retryDelays: (attempt) => 2 ** (attempt + 4) * 100,
-//   //   beforeRetry: ({ abort, attempt }) => {
-//   //     if (attempt > 3) abort()
-//   //   },
-//   //   statusCodes: [
-//   //     StatusCodes.INTERNAL_SERVER_ERROR,
-//   //     StatusCodes.SERVICE_UNAVAILABLE,
-//   //     StatusCodes.GATEWAY_TIMEOUT,
-//   //   ],
-//   // }),
-// ])
+  retryMiddleware({
+    allowMutations: false,
+    fetchTimeout: 5 * 1000,
+    retryDelays: (attempt) => 2 ** (attempt + 4) * 100,
+    beforeRetry: ({ abort, attempt }) => {
+      if (attempt > 3) abort();
+    },
+    statusCodes: [
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      StatusCodes.SERVICE_UNAVAILABLE,
+      StatusCodes.GATEWAY_TIMEOUT,
+    ],
+  }),
+]);
 
 const environment = EnvironmentIDB.create({ network });
 

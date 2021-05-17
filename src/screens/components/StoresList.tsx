@@ -1,24 +1,24 @@
-import type { FC } from 'react'
-import React, { Suspense, useState } from 'react'
-import { Button, Flex, Search, StatefulTable, Text } from '@vtex/admin-ui'
-import { graphql } from 'babel-plugin-relay/macro'
+import type { FC } from "react";
+import React, { Suspense, useState } from "react";
+import { Button, Flex, Search, StatefulTable, Text } from "@vtex/admin-ui";
+import { graphql } from "babel-plugin-relay/macro";
 import {
   useLazyLoadQuery,
   useFragment,
   useRefetchableFragment,
   useIsConnected,
-} from 'react-relay-offline'
+} from "react-relay-offline";
 
-import type { StoresListQuery } from './__generated__/StoresListQuery.graphql'
-import type { StoresList_ContractResume_contract$key } from './__generated__/StoresList_ContractResume_contract.graphql'
-import type { StoresList_stores$key } from './__generated__/StoresList_stores.graphql'
-import type { StoresList_ContractResume_contract_refetch } from './__generated__/StoresList_ContractResume_contract_refetch.graphql'
+import type { StoresListQuery } from "./__generated__/StoresListQuery.graphql";
+import type { StoresList_ContractResume_contract$key } from "./__generated__/StoresList_ContractResume_contract.graphql";
+import type { StoresList_stores$key } from "./__generated__/StoresList_stores.graphql";
+import type { StoresList_ContractResume_contract_refetch } from "./__generated__/StoresList_ContractResume_contract_refetch.graphql";
 
-type StoresWhereInput = any
+type StoresWhereInput = any;
 
 type ContractResumeProps = {
-  contract: StoresList_ContractResume_contract$key
-}
+  contract: StoresList_ContractResume_contract$key;
+};
 
 export const ContractResume: FC<ContractResumeProps> = (props) => {
   const { data: contract, refetch } = useRefetchableFragment<
@@ -33,9 +33,9 @@ export const ContractResume: FC<ContractResumeProps> = (props) => {
       }
     `,
     props.contract
-  )
+  );
 
-  const reload = () => refetch({}, { fetchPolicy: 'network-only' })
+  const reload = () => refetch({}, { fetchPolicy: "network-only" });
 
   return (
     <Flex>
@@ -44,21 +44,21 @@ export const ContractResume: FC<ContractResumeProps> = (props) => {
         Reload
       </Button>
     </Flex>
-  )
-}
+  );
+};
 
 type StoreListProps = {
-  where: StoresWhereInput
-}
+  where: StoresWhereInput;
+};
 
-const PER_PAGE = 3
+const PER_PAGE = 3;
 
 declare global {
   interface RelayConnections {
     StoreList_stores: {
-      where: StoresWhereInput
-      search?: string
-    }
+      where: StoresWhereInput;
+      search?: string;
+    };
   }
 }
 
@@ -74,14 +74,15 @@ export const StoresList: FC<StoreListProps> = ({ where }) => {
         ...StoresList_stores
       }
     `,
-    { count: PER_PAGE, where, search: '' },
+    { count: PER_PAGE, where, search: "" },
     {
-      fetchPolicy: 'store-and-network',
+      fetchPolicy: "store-and-network",
       networkCacheConfig: {
         poll: 3000,
+        ttl: 3000,
       },
     }
-  )
+  );
 
   const list = useFragment<StoresList_stores$key>(
     graphql`
@@ -103,12 +104,12 @@ export const StoresList: FC<StoreListProps> = ({ where }) => {
       }
     `,
     response.data!
-  )
+  );
 
-  const isConnected = useIsConnected()
+  const isConnected = useIsConnected();
 
-  const [search, setSearch] = useState('')
-  const [searchText, setSearchText] = useState('')
+  const [search, setSearch] = useState("");
+  const [searchText, setSearchText] = useState("");
 
   const handleSearch = () => {
     // list.refetch(
@@ -124,7 +125,7 @@ export const StoresList: FC<StoreListProps> = ({ where }) => {
     //     },
     //   }
     // )
-  }
+  };
 
   return (
     <>
@@ -141,29 +142,29 @@ export const StoresList: FC<StoreListProps> = ({ where }) => {
         density="compact"
         columns={[
           {
-            id: 'companyName',
-            header: 'Company Name',
+            id: "companyName",
+            header: "Company Name",
             width: 148,
           },
           {
-            id: 'tradeName',
-            header: 'Trade Name',
+            id: "tradeName",
+            header: "Trade Name",
             width: 156,
           },
           {
-            id: 'contract',
-            header: 'Contract',
+            id: "contract",
+            header: "Contract",
             width: 156,
             resolver: {
-              type: 'plain',
+              type: "plain",
               render: function renderContract({ item }) {
-                if (!item.contract) return null
+                if (!item.contract) return null;
 
                 return (
                   <Suspense fallback={<Text variant="small">Loading</Text>}>
                     <ContractResume contract={item.contract} />
                   </Suspense>
-                )
+                );
               },
             },
           },
@@ -177,5 +178,5 @@ export const StoresList: FC<StoreListProps> = ({ where }) => {
         {list.isLoadingNext ? 'Loading...' : 'Load more'}
       </Button> */}
     </>
-  )
-}
+  );
+};
