@@ -21,43 +21,43 @@ import { name as appName, version as appVersion } from "../../../package.json";
 
 const IS_DEVELOPMENT_MODE = process.env.NODE_ENV === "development";
 
-const fetchQuery: FetchFunction = (operation, variables) => {
-  return {
-    subscribe: (sink: any) => {
-      const query = async () => {
-        const response = await fetch("http://localhost:4000/graphql", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query: operation.text,
-            variables,
-          }),
-        });
+// const fetchQuery: FetchFunction = (operation, variables) => {
+//   return {
+//     subscribe: (sink: any) => {
+//       const controller = new AbortController();
 
-        const data = await response.json();
+//       const query = async () => {
+//         const response = await fetch("http://localhost:4000/graphql", {
+//           signal: controller.signal,
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({
+//             query: operation.text,
+//             variables,
+//           }),
+//         });
 
-        if (data.errors) {
-          sink.error?.(data);
-        } else {
-          sink.next?.(data);
-        }
+//         const data = await response.json();
 
-        sink.complete?.();
-      };
+//         if (data.errors) {
+//           sink.error?.(data);
+//         } else {
+//           sink.next?.(data);
+//         }
 
-      query();
+//         sink.complete?.();
+//       };
 
-      // let clo
+//       query();
 
-      // return {
-      //   unsubscribe: () => {},
-      //   closed: false,
-      // }
-    },
-  } as any;
-};
+//       return () => {
+//         controller.abort();
+//       };
+//     },
+//   } as any;
+// };
 
 // const network = Network.create(fetchQuery);
 

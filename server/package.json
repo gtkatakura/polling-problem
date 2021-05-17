@@ -1,0 +1,13 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "gtkatakura",
+  "license": "MIT",
+  "dependencies": {
+    "apollo-server": "^2.24.0"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  }
+}

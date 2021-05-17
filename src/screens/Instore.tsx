@@ -1,26 +1,13 @@
-import React, { Suspense, useEffect, useReducer } from "react";
+import React, { Suspense, useReducer } from "react";
 import type { FC } from "react";
 
 import { ThemeProvider } from "@vtex/admin-ui";
 
-import {
-  GraphQLProvider,
-  // afterFetch,
-} from "./components/RelayEnvironmentProvider";
+import { GraphQLProvider } from "./components/RelayEnvironmentProvider";
 import { StoresList } from "./components/StoresList";
 
 const App = () => {
   const [flag, toggle] = useReducer((value) => !value, true);
-
-  // useEffect(() => {
-  //   afterFetch.push(() => {
-  //     toggle();
-  //   });
-
-  //   return () => {
-  //     afterFetch.length = 0;
-  //   };
-  // }, []);
 
   return (
     <>
